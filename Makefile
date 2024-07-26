@@ -29,25 +29,29 @@ hostname: ## shows local machine ip
 	echo $(word 1,$(shell hostname -I))
 	echo $(ip addr show | grep "\binet\b.*\bdocker0\b" | awk '{print $2}' | cut -d '/' -f 1)
 
-#fix-permission: ## sets project directory permission
-#	$(DOCKER_USER) chown -R ${USER}: $(ROOT_DIR)/
-#
+fix-permission: ## sets project directory permission
+	$(DOCKER_USER) chown -R ${USER}: $(ROOT_DIR)/
+
 #host-check: ## shows this project ports availability on local machine
 #	cd infrastructure/nginx-php && $(MAKE) port-check
-#
+
 # -------------------------------------------------------------------------------------------------
 #  Application Service
+#  p = project
 # -------------------------------------------------------------------------------------------------
-.PHONY: project-set project-create-dev pcd project-start project-stop project-destroy
+.PHONY: p-set p-up-dev p-rebuild-dev p-start p-stop p-destroy
 
-#project-set: ## sets the project environment file to build the container
+#p-set: ## sets the project environment file to build the container
 #	cd infrastructure/nginx-php && $(MAKE) env-set
 #
-project-create-dev: ## Creates the project containers from docker-compose-dev.yml file
-	cd infrastructure/dev/nginx-php && docker-compose -f docker-compose-dev.yml up -d
+p-up-dev: ## Creates the project containers from docker-compose-dev.yml file
+	cd docker/infrastructure/dev && docker-compose --env-file ../../../.env -f docker-compose-dev.yml up -d
 
-pcd: ## Short abbreviation for project-create-dev command
-	cd docker/infrastructure/dev && docker-compose -f docker-compose-dev.yml up -d
+p-rebuild-dev: ## Rebuild the project containers from docker-compose-dev.yml file
+	cd docker/infrastructure/dev && docker-compose --env-file ../../../.env -f docker-compose-dev.yml up -d --build
+
+p-down-dev: ##
+	cd docker/infrastructure/dev && docker-compose --env-file ../../../.env -f docker-compose-dev.yml down
 
 #project-start: ## starts the project container running
 #	cd infrastructure/nginx-php && $(MAKE) start

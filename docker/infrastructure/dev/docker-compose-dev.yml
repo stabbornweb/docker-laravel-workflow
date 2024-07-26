@@ -1,0 +1,42 @@
+services:
+  nginx:
+    build:
+      context: ../../..
+      dockerfile: docker/infrastructure/dev/nginx/Dockerfile
+    container_name: nginx-dev
+    ports:
+      - "8080:80"
+      - "443:443"
+    volumes:
+      - ../../../backend:/var/www/html
+    restart: unless-stopped
+    depends_on:
+      - php
+    networks:
+      - backend
+
+  php:
+    pull_policy: never
+    build:
+      context: ../../..
+      dockerfile: docker/infrastructure/dev/php/Dockerfile
+      args:
+        - USER=${USER:-someone}
+        - UID=${UID:-1000}
+        - GID=${GID:-1000}
+    container_name: php-dev
+    volumes:
+      - ../../../backend:/var/www/html
+#    healthcheck:
+#      test: [ "CMD-SHELL", "curl --silent --fail http://127.0.0.1:9000/fpm-ping || exit 1" ]
+#      interval: 10s
+#      timeout: 5s
+#      retries: 5
+    tty: true
+    restart: unless-stopped
+    networks:
+      - backend
+
+networks:
+  backend:
+    driver: bridge
