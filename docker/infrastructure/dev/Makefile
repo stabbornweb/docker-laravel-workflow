@@ -8,7 +8,7 @@ C_RED='\033[0;31m'
 C_YEL='\033[0;33m'
 C_END='\033[0m'
 
-include ../../.env
+include .env
 
 DOCKER_PROJ="$(PROJECT_NAME) - LARAVEL 11"
 DOCKER_ABBR=$(PROJECT_ABBR)
@@ -22,7 +22,7 @@ CURRENT_DIR=$(patsubst %/,%,$(dir $(realpath $(firstword $(MAKEFILE_LIST)))))
 DIR_BASENAME=$(shell basename $(CURRENT_DIR))
 ROOT_DIR=$(CURRENT_DIR)
 
-DOCKER_COMPOSE?=$(DOCKER_USER) docker compose
+DOCKER_COMPOSE?=$(DOCKER_USER) docker-compose
 DOCKER_COMPOSE_RUN=$(DOCKER_COMPOSE) run --rm
 DOCKER_EXEC_TOOLS_APP=$(DOCKER_USER) docker exec -it $(DOCKER_CAAS) sh
 
@@ -73,14 +73,14 @@ env-set: ## sets docker .env file
 # -------------------------------------------------------------------------------------------------
 #  Container
 # -------------------------------------------------------------------------------------------------
-#.PHONY: container-ip ssh build up start stop restart clear destroy dev
-#
-#container-ip:
-#	$(DOCKER_USER) docker inspect -f '{{range.NetworkSettings.Networks}}{{.IPAddress}}{{end}}' $(DOCKER_CAAS)
-#
-#ssh: ## enters the container shell
-#	$(DOCKER_EXEC_TOOLS_APP)
-#
+.PHONY: container-ip ssh build up start stop restart clear destroy dev
+
+container-ip:
+	$(DOCKER_USER) docker inspect -f '{{range.NetworkSettings.Networks}}{{.IPAddress}}{{end}}' $(DOCKER_CAAS)
+
+ssh: ## enters the container shell
+	$(DOCKER_EXEC_TOOLS_APP)
+
 #build: ## builds the container from Dockerfile
 #	cd docker && $(DOCKER_COMPOSE) up --build --no-recreate -d
 #

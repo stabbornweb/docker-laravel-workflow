@@ -1,22 +1,5 @@
 services:
-  nginx:
-    build:
-      context: ../../..
-      dockerfile: docker/infrastructure/dev/nginx/Dockerfile
-    container_name: nginx-dev
-    ports:
-      - "8080:80"
-      - "443:443"
-    volumes:
-      - ../../../backend:/var/www/html
-    restart: unless-stopped
-    depends_on:
-      - php
-    networks:
-      - backend
-
   php:
-    pull_policy: never
     build:
       context: ../../..
       dockerfile: docker/infrastructure/dev/php/Dockerfile
@@ -24,19 +7,56 @@ services:
         - USER=${USER:-someone}
         - UID=${UID:-1000}
         - GID=${GID:-1000}
-    container_name: php-dev
+    pull_policy: never
+    container_name: ${DOCKER_CONTAINER_NAME_PREFIX}-php
     volumes:
       - ../../../backend:/var/www/html
-#    healthcheck:
-#      test: [ "CMD-SHELL", "curl --silent --fail http://127.0.0.1:9000/fpm-ping || exit 1" ]
-#      interval: 10s
-#      timeout: 5s
-#      retries: 5
     tty: true
     restart: unless-stopped
+    depends_on:
+      - db
+      - nginx
     networks:
-      - backend
+      - backend-network
+
+  db:
+    image: mysql:9.0.1
+    pull_policy: never
+    container_name: ${DOCKER_CONTAINER_NAME_PREFIX}-db
+    environment:
+      - MYSQL_DATABASE=${DOCKER_DB_DATABASE}
+      - MYSQL_USER=${DOCKER_DB_USERNAME}
+      - MYSQL_PASSWORD=${DOCKER_DB_PASSWORD}
+      - MYSQL_ROOT_PASSWORD=${DOCKER_DB_PASSWORD}
+    ports:
+      - "${DOCKER_DB_PORT}:3306"
+    volumes:
+      - dev-db-data:/var/lib/mysql
+    restart: unless-stopped
+    networks:
+      - backend-network
+
+
+  nginx:
+    build:
+      context: ../../..
+      dockerfile: docker/infrastructure/dev/nginx/Dockerfile
+    pull_policy: never
+    container_name: ${DOCKER_CONTAINER_NAME_PREFIX}-nginx
+    ports:
+      - "8080:80"
+    volumes:
+      - ../../../backend:/var/www/html
+    restart: unless-stopped
+    networks:
+      - backend-network
 
 networks:
-  backend:
+  backend-network:
     driver: bridge
+    name: backend-network
+
+volumes:
+  dev-db-data:
+    driver: local
+    name: dev-db-data
