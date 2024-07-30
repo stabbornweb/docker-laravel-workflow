@@ -13,7 +13,6 @@ include docker/infrastructure/dev/.env
 CURRENT_DIR=$(patsubst %/,%,$(dir $(realpath $(firstword $(MAKEFILE_LIST)))))
 DIR_BASENAME=$(shell basename $(CURRENT_DIR))
 ROOT_DIR=$(CURRENT_DIR)
-# The current date
 CURRENT_DATE := $(shell date +%Y-%m-%d)
 
 help: ## shows this Makefile help message
@@ -25,7 +24,7 @@ help: ## shows this Makefile help message
 # -------------------------------------------------------------------------------------------------
 #  System
 # -------------------------------------------------------------------------------------------------
-.PHONY: hostname fix-permission host-check
+.PHONY: hostname fix-permission host-check show-ids
 
 hostname: ## shows local machine ip
 	echo $(word 1,$(shell hostname -I))
@@ -37,15 +36,18 @@ fix-permission: ## sets project directory permission
 host-check: ## shows this project ports availability on local machine
 	cd docker/infrastructure/dev && $(MAKE) port-check
 
+show-ids: ## shows UID and GID current user of OS
+	echo "Your [UID] is: $$(id -u)"
+	echo "Your [GID] is: $$(id -g)"
+
 # -------------------------------------------------------------------------------------------------
 #  Application Service
-#
 # -------------------------------------------------------------------------------------------------
 .PHONY: dev-set dev-up dev-rebuild dev-down dev-start dev-stop dev-destroy
 
 #dev-set: ## sets the project environment file to build the container
 #	cd infrastructure/nginx-php && $(MAKE) env-set
-#
+
 dev-up: ## Creates the project containers from docker-compose-dev.yml file
 	cd docker/infrastructure/dev && docker-compose --env-file .env -f docker-compose-dev.yml up -d
 
