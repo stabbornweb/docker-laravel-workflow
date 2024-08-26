@@ -45,8 +45,8 @@ show-ids: ## shows UID and GID current user of OS
 # -------------------------------------------------------------------------------------------------
 .PHONY: dev-set dev-up dev-rebuild dev-down dev-start dev-stop dev-destroy
 
-#dev-set: ## sets the project environment file to build the container
-#	cd infrastructure/nginx-php && $(MAKE) env-set
+dev-set: ## sets the project environment file to build the container NEED FIX
+	cd infrastructure/nginx-php && $(MAKE) env-set
 
 dev-up: ## Creates the project containers from docker-compose-dev.yml file
 	cd docker/infrastructure/dev && docker-compose --env-file .env -f docker-compose-dev.yml up -d
@@ -54,29 +54,29 @@ dev-up: ## Creates the project containers from docker-compose-dev.yml file
 dev-rebuild: ## Rebuild the project containers from docker-compose-dev.yml file
 	cd docker/infrastructure/dev && docker-compose --env-file .env -f docker-compose-dev.yml up -d --build
 
-dev-down: ##
+dev-down: ## stop and delete all containers
 	cd docker/infrastructure/dev && docker-compose --env-file .env -f docker-compose-dev.yml down
 
-#dev-start: ## starts the project container running
-#	cd infrastructure/nginx-php && $(MAKE) start
-#
-#dev-stop: ## stops the project container but data won't be destroyed
-#	cd infrastructure/nginx-php && $(MAKE) stop
-#
-#dev-destroy: ## removes the project from Docker network destroying its data and Docker image
-#	cd infrastructure/nginx-php && $(MAKE) clear destroy
-#
+dev-start: ## starts the project container running FIX
+	cd infrastructure/nginx-php && $(MAKE) start
+
+dev-stop: ## stops the project container but data won't be destroyed NEED FIX
+	cd infrastructure/nginx-php && $(MAKE) stop
+
+dev-destroy: ## removes the project from Docker network destroying its data and Docker image NEED FIX
+	cd infrastructure/nginx-php && $(MAKE) clear destroy
+
 ## -------------------------------------------------------------------------------------------------
 ##  Backend Service
 ## -------------------------------------------------------------------------------------------------
 .PHONY: backend-ssh backend-update
 
 backend-ssh: ## enters the backend container shell
-	cd docker/infrastructure/dev && $(MAKE) ssh
+	cd docker/infrastructure/dev && docker exec -it dev-backend bash
 
-#backend-update: ## updates the backend set version into container
-#	cd infrastructure/nginx-php && $(MAKE) app-update
-#
+backend-update: ## updates the backend set version into container NEED FIX
+	cd infrastructure/nginx-php && $(MAKE) app-update
+
 ## -------------------------------------------------------------------------------------------------
 ##  Database Service
 ## -------------------------------------------------------------------------------------------------
