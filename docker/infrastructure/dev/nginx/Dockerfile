@@ -9,8 +9,9 @@ RUN apt-get update && \
     apt-get install -y openssl && \
     rm -rf /var/lib/apt/lists/*
 
-# create folder for certificates
-RUN mkdir -p /etc/nginx/certificates
+# Ensure necessary directories for Supervisor, Nginx certificates
+RUN mkdir -p /etc/nginx/certificates \
+             /var/www/html/storage/logs
 
 # generate certificates
 # TODO: change it and make additional logic for production environment
@@ -18,3 +19,4 @@ RUN openssl req -x509 -nodes -days 365 -newkey rsa:2048 -keyout /etc/nginx/certi
 
 # put nginx config
 COPY docker/infrastructure/dev/nginx/config/nginx.conf /etc/nginx/conf.d/default.conf
+COPY docker/infrastructure/dev/php/sepervisord/sepervisord.conf /etc/

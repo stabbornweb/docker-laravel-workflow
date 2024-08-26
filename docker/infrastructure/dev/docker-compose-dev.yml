@@ -1,14 +1,14 @@
 services:
-  php:
+  backend:
     build:
       context: ../../..
       dockerfile: docker/infrastructure/dev/php/Dockerfile
       args:
-        - USER=${USER:-someone}
-        - UID=${UID:-1000}
-        - GID=${GID:-1000}
+        - "USER=${USER:-someone}"
+        - "UID=${UID:-1000}"
+        - "GID=${GID:-1000}"
     pull_policy: never
-    container_name: ${DOCKER_CONTAINER_NAME_PREFIX}-php
+    container_name: ${DOCKER_CONTAINER_NAME_PREFIX}-backend
     volumes:
       - ../../../backend:/var/www/html
     tty: true
@@ -17,7 +17,8 @@ services:
       - db
       - nginx
     networks:
-      - backend-network
+      - db-network
+      - nginx-network
 
   db:
     image: mysql:9.0.1
@@ -31,10 +32,10 @@ services:
     ports:
       - "${DOCKER_DB_PORT}:3306"
     volumes:
-      - dev-db-data:/var/lib/mysql
+      - db-data:/var/lib/mysql
     restart: unless-stopped
     networks:
-      - backend-network
+      - db-network
 
 
   nginx:
@@ -47,16 +48,21 @@ services:
       - "8080:80"
     volumes:
       - ../../../backend:/var/www/html
+      - ../../../backend/storage/logs/nginx/:/var/log/nginx/
+      - ../../../backend/storage/logs/sepervisord/:/var/log/sepervisord/
     restart: unless-stopped
     networks:
-      - backend-network
+      - nginx-network
 
 networks:
-  backend-network:
+  db-network:
     driver: bridge
-    name: backend-network
+    name: dev-db-network
+  nginx-network:
+    driver: bridge
+    name: dev-nginx-network
 
 volumes:
-  dev-db-data:
+  db-data:
     driver: local
     name: dev-db-data

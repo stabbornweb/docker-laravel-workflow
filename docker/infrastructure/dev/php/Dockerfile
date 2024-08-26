@@ -61,14 +61,15 @@ RUN mkdir -p /home/${USER}/.composer && \
 # Copy PHP configuration files from local
 COPY docker/infrastructure/dev/php/config/php.ini-development /usr/local/etc/php/php.ini
 COPY docker/infrastructure/dev/php/config/www.conf /usr/local/etc/php-fpm.d/www.conf
+COPY docker/infrastructure/dev/php/sepervisord/sepervisord.conf /etc/
 
 # Set the working directory
-WORKDIR /var/www/html
+WORKDIR "/var/www/html"
 
 # Use the specified user for running the application
 USER ${USER}
 
-ENTRYPOINT ["/usr/local/bin/laravel-start-entrypoint.sh"]
-
 # Expose port/s Nginx will listen - Add more as required: (9003 - Xdebug)
 EXPOSE 80 443 9003
+
+ENTRYPOINT ["/usr/local/bin/laravel-start-entrypoint.sh", "sepervisord", "--nodaemon", "--configuration", "/etc/sepervisord.conf"]
