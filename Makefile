@@ -48,4 +48,4 @@ php-verify: ## Verify PHP Installation Package
 	cd docker/infrastructure/dev && docker exec -it dev-backend bash /usr/local/bin/verify-php.sh
 
 dev-db-check: ## Checks the database availability
-	@docker exec -it dev-backend php artisan db:status
+	docker exec -t dev-backend php artisan db:status
