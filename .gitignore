@@ -18,7 +18,7 @@ lerna-debug.log*
 *.sln
 *.sw?
 .env
-!docker/infrastructure/dev.env
+!docker/infrastructure/dev/.env
 vendor
 node_modules
 dist
