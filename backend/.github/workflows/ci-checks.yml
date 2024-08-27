@@ -2,12 +2,12 @@ name: Backend App Checks
 
 on:
   push:
-#    branches:
+    branches: ["feature/setup-git-workflows"]
 #      - main
 #      - staging
 #      - production
   pull_request:
-#    branches:
+    branches: ["feature/setup-git-workflows"]
 #      - main
 #      - develop
 #      - staging
