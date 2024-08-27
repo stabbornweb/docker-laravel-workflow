@@ -48,7 +48,7 @@ php-verify: ## Verify PHP Installation Package
 	cd docker/infrastructure/dev && docker exec -it dev-backend bash /usr/local/bin/verify-php.sh
 
 dev-db-check: ## Checks the database availability
-	docker exec -t dev-backend php artisan db:status
+	docker compose --file=docker/infrastructure/dev/docker-compose-dev.yml exec backend php artisan db:status
 
 env-copy: ## Checks the database availability
 	docker exec -t dev-backend php -r "file_exists('.env') || copy('.env.example', '.env');"

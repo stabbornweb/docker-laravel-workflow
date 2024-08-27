@@ -1,25 +1,23 @@
-name: Backend App Checks
+name: Dev Backend App Checks
 
 on:
   push:
-    branches: [ "feature/setup-git-workflows" ]
-  #      - main
-  #      - staging
-  #      - production
+    branches: [ "develop", "feature/setup-git-workflows" ]
   pull_request:
-    branches: [ "feature/setup-git-workflows" ]
-#      - main
-#      - develop
-#      - staging
+    branches: [ "develop", "feature/setup-git-workflows" ]
 #  release:
 #    types: [published]
 
 jobs:
   build_backend:
-    name: Build Backend App
+    name: Build Dev Backend App
     runs-on: ubuntu-latest
-    permissions:
-      contents: write
+    #    permissions:
+    #      contents: write
+    env:
+      DOCKER_COMPOSE_FILE: docker/infrastructure/dev/docker-compose-dev.yml
+      ENV_PREFIX: dev
+      DOCKER_APP_CONTAINER_NAME: backend
     steps:
       - uses: actions/checkout@v4
       - name: Docker Version
@@ -31,28 +29,28 @@ jobs:
           echo "GID=$(id -g)" >> .env
       - name: Build The Docker Images
         run: |
-          make dev-build
+          make ${{ env.ENV_PREFIX }}-build
       - name: Run The Docker Images
         run: |
-          make dev-up
+          make ${{ env.ENV_PREFIX }}-up
       - name: Check Running Containers
         run: |
           docker ps -a
       - name: PHP Version
         run: |
-          docker compose --file=docker/infrastructure/dev/docker-compose-dev.yml exec backend php --version
+          docker compose --file=${{ env.DOCKER_COMPOSE_FILE }} exec ${{ env.DOCKER_APP_CONTAINER_NAME }} php --version
       - name: Composer Version
         run: |
-          docker compose --file=docker/infrastructure/dev/docker-compose-dev.yml exec backend composer --version
+          docker compose --file=${{ env.DOCKER_COMPOSE_FILE }} exec ${{ env.DOCKER_APP_CONTAINER_NAME }} composer --version
       #      - name: Copy .env
       #        run: |
       #          make env-copy
       #      - name: Install Composer Dependencies
       #        run: |
       #          make composer-install
-      #      - name: Checks the Database Availability
-      #        run: |
-      #          make dev-db-check
+      - name: Checks the Database Availability
+        run: |
+          make dev-db-check
 
 
       # Use filter if project contains separated frontend app
