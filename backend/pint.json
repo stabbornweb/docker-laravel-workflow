@@ -1,0 +1,7 @@
+{
+    "preset": "laravel",
+    "rules": {
+        "no_useless_else": true,
+        "combine_consecutive_issets": true
+    }
+}
