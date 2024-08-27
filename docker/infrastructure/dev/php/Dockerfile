@@ -19,6 +19,7 @@ RUN useradd -u ${UID} -g ${USER} -G www-data,root -m -d /home/${USER} ${USER}
 # Install necessary packages
 RUN apt-get update && apt-get install -y \
     libpng-dev \
+    libicu-dev \
     libonig-dev \
     libxml2-dev \
     libjpeg62-turbo-dev \
@@ -35,7 +36,7 @@ RUN apt-get update && apt-get install -y \
 RUN apt-get clean && rm -rf /var/lib/apt/lists/*
 
 # Install PHP extensions
-RUN docker-php-ext-install pdo_mysql mbstring exif pcntl bcmath gd zip
+RUN docker-php-ext-install pdo_mysql mbstring exif pcntl bcmath gd zip intl
 RUN docker-php-ext-configure gd --with-freetype --with-jpeg
 
 # Install Composer
@@ -43,7 +44,9 @@ COPY --from=composer:2.5.8 /usr/bin/composer /usr/bin/composer
 
 # Copy the Laravel installation script and set permissions for the script
 COPY docker/infrastructure/dev/entrypoints/laravel-start-entrypoint.sh /usr/local/bin/laravel-start-entrypoint.sh
-RUN chmod 755 /usr/local/bin/laravel-start-entrypoint.sh
+COPY docker/infrastructure/dev/entrypoints/verify-php.sh /usr/local/bin/verify-php.sh
+RUN chmod 755 /usr/local/bin/laravel-start-entrypoint.sh && \
+    chmod 755 /usr/local/bin/verify-php.sh
 
 # Ensure necessary directories exist and set permissions
 RUN mkdir -p /var/www/html/storage /var/www/html/bootstrap/cache && \
