@@ -40,13 +40,13 @@ RUN docker-php-ext-install pdo_mysql mbstring exif pcntl bcmath gd zip intl
 RUN docker-php-ext-configure gd --with-freetype --with-jpeg
 
 # Install Composer
-COPY --from=composer:2.5.8 /usr/bin/composer /usr/bin/composer
+COPY --from=composer:2.7 /usr/bin/composer /usr/bin/composer
 
 # Copy the Laravel installation script and set permissions for the script
-COPY docker/infrastructure/dev/entrypoints/laravel-start-entrypoint.sh /usr/local/bin/laravel-start-entrypoint.sh
-COPY docker/infrastructure/dev/entrypoints/verify-php.sh /usr/local/bin/verify-php.sh
-RUN chmod 755 /usr/local/bin/laravel-start-entrypoint.sh && \
-    chmod 755 /usr/local/bin/verify-php.sh
+COPY docker/infrastructure/dev/scripts/laravel-create-project-script.sh /usr/local/bin/laravel-create-project-script.sh
+COPY docker/infrastructure/dev/scripts/verify-php-extension-script.sh /usr/local/bin/verify-php-extension-script.sh
+RUN chmod 755 /usr/local/bin/laravel-create-project-script.sh && \
+    chmod 755 /usr/local/bin/verify-php-extension-script.sh
 
 # Ensure necessary directories exist and set permissions
 RUN mkdir -p /var/www/html/storage /var/www/html/bootstrap/cache && \
@@ -73,6 +73,6 @@ WORKDIR "/var/www/html"
 USER ${USER}
 
 # Expose port/s Nginx will listen - Add more as required: (9003 - Xdebug)
-EXPOSE 80 443 9003
+EXPOSE 80 443
 
-ENTRYPOINT ["/usr/local/bin/laravel-start-entrypoint.sh", "sepervisord", "--nodaemon", "--configuration", "/etc/sepervisord.conf"]
+ENTRYPOINT ["/usr/local/bin/laravel-create-project-script.sh", "sepervisord", "--nodaemon", "--configuration", "/etc/sepervisord.conf"]

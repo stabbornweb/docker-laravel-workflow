@@ -40,10 +40,10 @@ jobs:
           docker ps -a
       - name: PHP Version
         run: |
-          docker compose -f docker-compose-dev.yml exec dev-backend php --version
+          docker compose --file=docker/infrastructure/dev/docker-compose-dev.yml exec backend php --version
       - name: Composer Version
         run: |
-          docker compose -f docker-compose-dev.yml dev-backend composer --version
+          docker compose --file=docker/infrastructure/dev/docker-compose-dev.yml exec backend composer --version
       #      - name: Copy .env
       #        run: |
       #          make env-copy
