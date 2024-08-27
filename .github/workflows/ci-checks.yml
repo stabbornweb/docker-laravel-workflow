@@ -39,6 +39,12 @@ jobs:
       - name: Check Running Containers
         run: |
           docker ps -a
+      - name: Copy .env
+        run: |
+          make env-copy
+      - name: Install Composer Dependencies
+        run: |
+          make composer-install
       - name: Checks the Database Availability
         run: |
           make dev-db-check

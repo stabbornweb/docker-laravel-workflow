@@ -28,7 +28,7 @@ help: ## shows this Makefile help message
 # -------------------------------------------------------------------------------------------------
 #  System Commands
 # -------------------------------------------------------------------------------------------------
-.PHONY: hostname fix-permission host-check show-ids php-verify wait-for-db
+.PHONY: hostname fix-permission host-check show-ids php-verify wait-for-db composer-install env-copy
 
 hostname: ## shows local machine ip
 	echo $(word 1,$(shell hostname -I))
@@ -49,3 +49,24 @@ php-verify: ## Verify PHP Installation Package
 
 dev-db-check: ## Checks the database availability
 	docker exec -t dev-backend php artisan db:status
+
+env-copy: ## Checks the database availability
+	docker exec -t dev-backend php -r "file_exists('.env') || copy('.env.example', '.env');"
+
+composer-install-no-dev: ## Installs composer no-dev dependencies
+	@make exec-bash cmd="COMPOSER_MEMORY_LIMIT=-1 composer install --optimize-autoloader --no-dev"
+
+composer-install: ## Installs composer dependencies
+	docker exec -t dev-backend composer install --optimize-autoloader -q --no-ansi --no-interaction --no-scripts --no-progress --prefer-dist
+
+composer-update: ## Updates composer dependencies
+	@make exec-bash cmd="COMPOSER_MEMORY_LIMIT=-1 composer update"
+
+key-generate: ## Sets the application key
+	@make exec cmd="php artisan key:generate"
+
+info: ## Shows Php and Laravel version
+	@make exec cmd="php artisan --version"
+	@make exec cmd="php artisan env"
+	@make exec cmd="php --version"
+	@make exec cmd="composer --version"
