@@ -69,7 +69,7 @@ services:
 
   redis:
     image: redis:7.4-alpine
-    container_name: redis
+    container_name: ${DOCKER_CONTAINER_NAME_PREFIX}-redis
     restart: always
     volumes:
       - redis-data:/data
@@ -85,7 +85,7 @@ services:
 
   redis_insight:
     image: redislabs/redisinsight:2.54.0
-    container_name: redis_insight
+    container_name: ${DOCKER_CONTAINER_NAME_PREFIX}-redis-insight
     restart: always
     command:
       - 'redis-server'
