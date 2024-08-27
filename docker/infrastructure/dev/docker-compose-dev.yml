@@ -14,11 +14,11 @@ services:
     tty: true
     restart: unless-stopped
     depends_on:
-      - db:
+        db:
           condition: "service_healthy"
-      - nginx:
+        nginx:
           condition: "service_healthy"
-      - redis:
+        redis:
           condition: "service_healthy"
     networks:
       - db-network
@@ -80,7 +80,7 @@ services:
     volumes:
       - redis-insight-data:/db
     depends_on:
-      - redis:
+        redis:
           condition: "service_healthy"
     networks:
       - redis-network
