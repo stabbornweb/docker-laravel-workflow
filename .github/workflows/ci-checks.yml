@@ -34,9 +34,9 @@ jobs:
 #      - name: Get npm dependencies.
 #        if: steps.filter.outputs.frontend == 'true'
 #        run: npm install
-
+      - name: Build The Docker Images
         run: make dev-build
-      - name: Starts The Docker Images
+      - name: Run The Docker Images
         run: make dev-up
       - name: Check Running Containers
         run: docker ps -a
