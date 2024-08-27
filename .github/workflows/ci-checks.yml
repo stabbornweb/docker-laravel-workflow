@@ -35,8 +35,11 @@ jobs:
 #        if: steps.filter.outputs.frontend == 'true'
 #        run: npm install
       - name: Build The Docker Images
-        run: make dev-build
+        run: |
+          make dev-build
       - name: Run The Docker Images
-        run: make dev-up
+        run: |
+          make dev-up
       - name: Check Running Containers
-        run: docker ps -a
+        run: |
+          docker ps -a
