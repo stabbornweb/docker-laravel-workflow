@@ -38,15 +38,21 @@ jobs:
       - name: Check Running Containers
         run: |
           docker ps -a
-#      - name: Copy .env
-#        run: |
-#          make env-copy
-#      - name: Install Composer Dependencies
-#        run: |
-#          make composer-install
-#      - name: Checks the Database Availability
-#        run: |
-#          make dev-db-check
+      - name: PHP Version
+        run: |
+          docker compose exec dev-backend php --version
+      - name: Composer Version
+        run: |
+          docker compose exec dev-backend composer --version
+      #      - name: Copy .env
+      #        run: |
+      #          make env-copy
+      #      - name: Install Composer Dependencies
+      #        run: |
+      #          make composer-install
+      #      - name: Checks the Database Availability
+      #        run: |
+      #          make dev-db-check
 
 
       # Use filter if project contains separated frontend app
