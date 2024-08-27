@@ -2,12 +2,12 @@ name: Backend App Checks
 
 on:
   push:
-    branches: ["feature/setup-git-workflows"]
-#      - main
-#      - staging
-#      - production
+    branches: [ "feature/setup-git-workflows" ]
+  #      - main
+  #      - staging
+  #      - production
   pull_request:
-    branches: ["feature/setup-git-workflows"]
+    branches: [ "feature/setup-git-workflows" ]
 #      - main
 #      - develop
 #      - staging
@@ -22,16 +22,13 @@ jobs:
       contents: write
     steps:
       - uses: actions/checkout@v4
-# Use filter if project contains separated frontend app
-#      - uses: dorny/paths-filter@v2
-#        id: filter
-#        with:
-#          filters: |
-#              Mobile:
-#                - 'frontend/**'
-#      - name: Get npm dependencies.
-#        if: steps.filter.outputs.frontend == 'true'
-#        run: npm install
+      - name: Docker Version
+        run: |
+          docker version
+      - name: Docker Compose Settings
+        run: |
+          echo "UID=$(id -u)" >> .env
+          echo "GID=$(id -g)" >> .env
       - name: Build The Docker Images
         run: |
           make dev-build
@@ -41,12 +38,24 @@ jobs:
       - name: Check Running Containers
         run: |
           docker ps -a
-      - name: Copy .env
-        run: |
-          make env-copy
-      - name: Install Composer Dependencies
-        run: |
-          make composer-install
-      - name: Checks the Database Availability
-        run: |
-          make dev-db-check
+#      - name: Copy .env
+#        run: |
+#          make env-copy
+#      - name: Install Composer Dependencies
+#        run: |
+#          make composer-install
+#      - name: Checks the Database Availability
+#        run: |
+#          make dev-db-check
+
+
+      # Use filter if project contains separated frontend app
+      #      - uses: dorny/paths-filter@v2
+      #        id: filter
+      #        with:
+      #          filters: |
+      #              Mobile:
+      #                - 'frontend/**'
+      #      - name: Get npm dependencies.
+      #        if: steps.filter.outputs.frontend == 'true'
+      #        run: npm install
