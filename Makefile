@@ -41,29 +41,32 @@ show-ids: ## shows UID and GID current user of OS
 	echo "Your [GID] is: $$(id -g)"
 
 # -------------------------------------------------------------------------------------------------
-#  Application Service
+#  Dev Application Service
 # -------------------------------------------------------------------------------------------------
 .PHONY: dev-set dev-up dev-rebuild dev-down dev-start dev-stop dev-destroy
 
-dev-set: ## sets the project environment file to build the container NEED FIX
+dev-set: ## Sets the project environment file to build the container NEED FIX
 	cd infrastructure/nginx-php && $(MAKE) env-set
 
 dev-up: ## Creates the project containers from docker-compose-dev.yml file
 	cd docker/infrastructure/dev && docker-compose --env-file .env -f docker-compose-dev.yml up -d
 
+dev-down: ## Stop and delete all containers
+	cd docker/infrastructure/dev && docker-compose --env-file .env -f docker-compose-dev.yml down
+
 dev-rebuild: ## Rebuild the project containers from docker-compose-dev.yml file
 	cd docker/infrastructure/dev && docker-compose --env-file .env -f docker-compose-dev.yml up -d --build
 
-dev-down: ## stop and delete all containers
-	cd docker/infrastructure/dev && docker-compose --env-file .env -f docker-compose-dev.yml down
+dev-build: ## Build dev environment from docker-compose-dev.yml file
+	cd docker/infrastructure/dev && docker-compose --env-file .env -f docker-compose-dev.yml build
 
-dev-start: ## starts the project container running FIX
+dev-start: ## Starts the project container running NEED FIX
 	cd infrastructure/nginx-php && $(MAKE) start
 
-dev-stop: ## stops the project container but data won't be destroyed NEED FIX
+dev-stop: ## Stops the project container but data won't be destroyed NEED FIX
 	cd infrastructure/nginx-php && $(MAKE) stop
 
-dev-destroy: ## removes the project from Docker network destroying its data and Docker image NEED FIX
+dev-destroy: ## Removes the project from Docker network destroying its data and Docker image NEED FIX
 	cd infrastructure/nginx-php && $(MAKE) clear destroy
 
 ## -------------------------------------------------------------------------------------------------

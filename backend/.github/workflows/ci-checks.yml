@@ -1,0 +1,26 @@
+name: Backend App Checks
+
+on:
+  push:
+#    branches:
+#      - main
+#      - staging
+#      - production
+#  pull_request:
+#    branches:
+#      - main
+#      - develop
+#      - staging
+#  release:
+#    types: [published]
+
+jobs:
+  Build:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+        run: make dev-build
+      - name: Starts The Docker Images
+        run: make dev-up
+      - name: Check Running Containers
+        run: docker ps -a
