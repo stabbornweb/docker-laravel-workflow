@@ -51,7 +51,7 @@ dev-db-check: ## Checks the database availability
 	docker compose --file=docker/infrastructure/dev/docker-compose-dev.yml exec backend php artisan db:status
 
 env-copy: ## Checks the database availability
-	docker exec -t dev-backend php -r "file_exists('.env') || copy('.env.example', '.env');"
+	docker compose --file=docker/infrastructure/dev/docker-compose-dev.yml exec backend php -r "file_exists('.env') || copy('.env.example', '.env');"
 
 composer-install-no-dev: ## Installs composer no-dev dependencies
 	docker exec -t dev-backend composer install --optimize-autoloader -q --no-ansi --no-interaction --no-scripts --no-progress --prefer-dist --no-dev

@@ -42,12 +42,12 @@ jobs:
       - name: Composer Version
         run: |
           docker compose --file=${{ env.DOCKER_COMPOSE_FILE }} exec ${{ env.DOCKER_APP_CONTAINER_NAME }} composer --version
-      #      - name: Copy .env
-      #        run: |
-      #          make env-copy
-      #      - name: Install Composer Dependencies
-      #        run: |
-      #          make composer-install
+      - name: Copy .env
+        run: |
+          make env-copy
+      - name: Install Composer Dependencies
+        run: |
+          make composer-install
       - name: Checks the Database Availability
         run: |
           make dev-db-check
