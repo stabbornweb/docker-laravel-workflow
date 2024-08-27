@@ -28,7 +28,7 @@ help: ## shows this Makefile help message
 # -------------------------------------------------------------------------------------------------
 #  System Commands
 # -------------------------------------------------------------------------------------------------
-.PHONY: hostname fix-permission host-check show-ids
+.PHONY: hostname fix-permission host-check show-ids php-verify wait-for-db
 
 hostname: ## shows local machine ip
 	echo $(word 1,$(shell hostname -I))
@@ -43,3 +43,9 @@ host-check: ## shows this project ports availability on local machine
 show-ids: ## shows UID and GID current user of OS
 	echo "Your [UID] is: $$(id -u)"
 	echo "Your [GID] is: $$(id -g)"
+
+php-verify: ## Verify PHP Installation Package
+	cd docker/infrastructure/dev && docker exec -it dev-backend bash /usr/local/bin/verify-php.sh
+
+dev-db-check: ## Checks the database availability
+	@docker exec -it dev-backend php artisan db:status

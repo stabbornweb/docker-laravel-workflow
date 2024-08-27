@@ -18,10 +18,6 @@ jobs:
   build_backend:
     name: Build Backend App
     runs-on: ubuntu-latest
-#    defaults:
-#      run:
-#        # Backend folder working directory.
-#        working-directory: backend
     steps:
       - uses: actions/checkout@v4
 # Use filter if project contains separated frontend app
@@ -43,3 +39,6 @@ jobs:
       - name: Check Running Containers
         run: |
           docker ps -a
+      - name: Checks the Database Availability
+        run: |
+          make dev-db-check
