@@ -57,7 +57,7 @@ composer-install-no-dev: ## Installs composer no-dev dependencies
 	docker exec -t dev-backend composer install --optimize-autoloader -q --no-ansi --no-interaction --no-scripts --no-progress --prefer-dist --no-dev
 
 composer-install: ## Installs composer dependencies
-	docker exec -t dev-backend sudo composer install --optimize-autoloader -q --no-ansi --no-interaction --no-scripts --no-progress --prefer-dist
+	docker exec -t dev-backend composer install --optimize-autoloader -q --no-ansi --no-interaction --no-scripts --no-progress --prefer-dist
 
 composer-update: ## Updates composer dependencies
 	@make exec-bash cmd="COMPOSER_MEMORY_LIMIT=-1 composer update"
