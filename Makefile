@@ -49,16 +49,16 @@ dev-set: ## Sets the project environment file to build the container NEED FIX
 	cd infrastructure/nginx-php && $(MAKE) env-set
 
 dev-up: ## Creates the project containers from docker-compose-dev.yml file
-	cd docker/infrastructure/dev && docker-compose --env-file .env -f docker-compose-dev.yml up -d
+	cd docker/infrastructure/dev && docker compose --env-file .env -f docker-compose-dev.yml up -d
 
 dev-down: ## Stop and delete all containers
-	cd docker/infrastructure/dev && docker-compose --env-file .env -f docker-compose-dev.yml down
+	cd docker/infrastructure/dev && docker compose --env-file .env -f docker-compose-dev.yml down
 
 dev-rebuild: ## Rebuild the project containers from docker-compose-dev.yml file
-	cd docker/infrastructure/dev && docker-compose --env-file .env -f docker-compose-dev.yml up -d --build
+	cd docker/infrastructure/dev && docker compose --env-file .env -f docker-compose-dev.yml up -d --build
 
 dev-build: ## Build dev environment from docker-compose-dev.yml file
-	cd docker/infrastructure/dev && docker-compose --env-file .env -f docker-compose-dev.yml build
+	cd docker/infrastructure/dev && docker compose --env-file .env -f docker-compose-dev.yml build
 
 dev-start: ## Starts the project container running NEED FIX
 	cd infrastructure/nginx-php && $(MAKE) start
