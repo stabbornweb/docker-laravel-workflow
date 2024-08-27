@@ -1,3 +1,25 @@
+networks:
+  db-network:
+    driver: bridge
+    name: dev-db-network
+  nginx-network:
+    driver: bridge
+    name: dev-nginx-network
+  redis-network:
+    driver: bridge
+    name: dev-redis-network
+
+volumes:
+  db-data:
+    driver: local
+    name: dev-db-data
+  redis-data:
+    driver: local
+    name: dev-redis-data
+  redis-insight-data:
+    driver: local
+    name: dev-redis-insight-data
+
 services:
   backend:
     build:
@@ -24,22 +46,24 @@ services:
       - redis-network
 
   db:
-    image: mysql:9.0.1
+    build:
+      context: ../../..
+      dockerfile: docker/infrastructure/dev/mysql/Dockerfile
     container_name: ${DOCKER_CONTAINER_NAME_PREFIX}-db
     environment:
-      - MYSQL_DATABASE=${DOCKER_DB_DATABASE}
-      - MYSQL_USER=${DOCKER_DB_USERNAME}
-      - MYSQL_PASSWORD=${DOCKER_DB_PASSWORD}
-      - MYSQL_ROOT_PASSWORD=${DOCKER_DB_PASSWORD}
+      - MYSQL_DATABASE=${DOCKER_DB_DATABASE:-laravel}
+      - MYSQL_USER=${DOCKER_DB_USERNAME:-laravel}
+      - MYSQL_PASSWORD=${DOCKER_DB_PASSWORD:-laravel}
+      - MYSQL_ROOT_PASSWORD=${DOCKER_DB_PASSWORD:-laravel}
     ports:
-      - "${DOCKER_DB_PORT}:3306"
+      - "${DOCKER_DB_PORT:-3306}:3306"
     volumes:
       - db-data:/var/lib/mysql
     restart: unless-stopped
     networks:
       - db-network
     healthcheck:
-      test: [ "CMD-SHELL", "mysqladmin ping -h localhost -u${DOCKER_DB_USERNAME} -p${DOCKER_DB_PASSWORD}" ]
+      test: [ "CMD-SHELL", "mysqladmin ping -h localhost -u${DOCKER_DB_USERNAME:-laravel} -p${DOCKER_DB_PASSWORD:-laravel}" ]
       interval: 30s
       timeout: 10s
       retries: 5
@@ -89,7 +113,7 @@ services:
     restart: always
     command:
       - 'redis-server'
-      - '--requirepass ${DOCKER_REDIS_PASSWORD}'
+      - '--requirepass ${DOCKER_REDIS_PASSWORD:-redis}'
     ports:
       - "8001:5540"
     volumes:
@@ -99,25 +123,3 @@ services:
           condition: "service_healthy"
     networks:
       - redis-network
-
-networks:
-  db-network:
-    driver: bridge
-    name: dev-db-network
-  nginx-network:
-    driver: bridge
-    name: dev-nginx-network
-  redis-network:
-    driver: bridge
-    name: dev-redis-network
-
-volumes:
-  db-data:
-    driver: local
-    name: dev-db-data
-  redis-data:
-    driver: local
-    name: dev-redis-data
-  redis-insight-data:
-    driver: local
-    name: dev-redis-insight-data
