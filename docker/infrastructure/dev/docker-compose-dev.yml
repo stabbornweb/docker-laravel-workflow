@@ -26,7 +26,7 @@ services:
       - redis-network
 
   db:
-    image: mysql:9.0.1
+    image: mysql:8.0.33
     pull_policy: never
     container_name: ${DOCKER_CONTAINER_NAME_PREFIX}-db
     environment:
