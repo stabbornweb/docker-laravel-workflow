@@ -15,10 +15,26 @@ on:
 #    types: [published]
 
 jobs:
-  Build:
+  build_backend:
+    name: Build Backend App
     runs-on: ubuntu-latest
+    defaults:
+      run:
+        # Backend folder working directory.
+        working-directory: backend
     steps:
       - uses: actions/checkout@v4
+# Use filter if project contains separated frontend app
+#      - uses: dorny/paths-filter@v2
+#        id: filter
+#        with:
+#          filters: |
+#              Mobile:
+#                - 'frontend/**'
+#      - name: Get npm dependencies.
+#        if: steps.filter.outputs.frontend == 'true'
+#        run: npm install
+
         run: make dev-build
       - name: Starts The Docker Images
         run: make dev-up
