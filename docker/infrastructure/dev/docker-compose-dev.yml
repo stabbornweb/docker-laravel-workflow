@@ -16,9 +16,11 @@ services:
     depends_on:
       - db
       - nginx
+      - redis
     networks:
       - db-network
       - nginx-network
+      - redis-network
 
   db:
     image: mysql:9.0.1
@@ -37,7 +39,6 @@ services:
     networks:
       - db-network
 
-
   nginx:
     build:
       context: ../../..
@@ -53,6 +54,32 @@ services:
     restart: unless-stopped
     networks:
       - nginx-network
+  redis:
+    image: redis:7.4-alpine
+    container_name: redis
+    restart: always
+    volumes:
+      - redis-data:/data
+    ports:
+      - "6379:6379"
+    networks:
+      - redis-network
+
+  redis_insight:
+    image: redislabs/redisinsight:2.54.0
+    container_name: redis_insight
+    restart: always
+    command:
+      - 'redis-server'
+      - '--requirepass ${DOCKER_REDIS_PASSWORD}'
+    ports:
+      - "8001:5540"
+    volumes:
+      - redis-insight-data:/db
+    depends_on:
+      - redis
+    networks:
+      - redis-network
 
 networks:
   db-network:
@@ -61,8 +88,17 @@ networks:
   nginx-network:
     driver: bridge
     name: dev-nginx-network
+  redis-network:
+    driver: bridge
+    name: dev-redis-network
 
 volumes:
   db-data:
     driver: local
     name: dev-db-data
+  redis-data:
+    driver: local
+    name: dev-redis-data
+  redis-insight-data:
+    driver: local
+    name: dev-redis-insight-data
