@@ -44,11 +44,11 @@ jobs:
           docker compose --file=${{ env.DOCKER_COMPOSE_FILE }} exec ${{ env.DOCKER_APP_CONTAINER_NAME }} composer --version
       - name: Copy .env
         run: |
-          docker compose --file=${{ env.DOCKER_COMPOSE_FILE }} exec ${{ env.DOCKER_APP_CONTAINER_NAME }} php -r "file_exists('.env') || copy('.env.example', '.env');"
+          docker compose --file=../${{ env.DOCKER_COMPOSE_FILE }} exec ${{ env.DOCKER_APP_CONTAINER_NAME }} php -r "file_exists('.env') || copy('.env.example', '.env');"
         working-directory: ./backend
       - name: Install Composer Dependencies
         run: |
-          docker compose --file=${{ env.DOCKER_COMPOSE_FILE }} exec ${{ env.DOCKER_APP_CONTAINER_NAME }} composer install --optimize-autoloader -q --no-ansi --no-interaction --no-scripts --no-progre
+          docker compose --file=../${{ env.DOCKER_COMPOSE_FILE }} exec ${{ env.DOCKER_APP_CONTAINER_NAME }} composer install --optimize-autoloader -q --no-ansi --no-interaction --no-scripts --no-progre
         working-directory: ./backend
 
       - name: Checks the Database Availability
