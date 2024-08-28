@@ -48,7 +48,7 @@ jobs:
         working-directory: ./backend
       - name: Install Composer Dependencies
         run: |
-          docker compose --file=../${{ env.DOCKER_COMPOSE_FILE }} exec ${{ env.DOCKER_APP_CONTAINER_NAME }} composer install --optimize-autoloader -q --no-ansi --no-interaction --no-scripts --no-progre
+          docker compose --file=../${{ env.DOCKER_COMPOSE_FILE }} exec ${{ env.DOCKER_APP_CONTAINER_NAME }} composer install --optimize-autoloader -q --no-ansi --no-interaction --no-scripts --no-progress --prefer-dist
         working-directory: ./backend
 
       - name: Checks the Database Availability
