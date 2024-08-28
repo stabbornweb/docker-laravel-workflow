@@ -23,10 +23,10 @@ jobs:
       - name: Docker Version
         run: |
           docker version
-      - name: Docker Compose Settings
-        run: |
-          echo "UID=$(id -u)" >> .env
-          echo "GID=$(id -g)" >> .env
+#      - name: Docker Compose Settings
+#        run: |
+#          echo "UID=$(id -u)" >> .env
+#          echo "GID=$(id -g)" >> .env
       - name: Build The Docker Images
         run: |
           make ${{ env.ENV_PREFIX }}-build
@@ -45,9 +45,12 @@ jobs:
       - name: Copy .env
         run: |
           make env-copy
+        working-directory: ./backend
       - name: Install Composer Dependencies
         run: |
           make composer-install
+        working-directory: ./backend
+
       - name: Checks the Database Availability
         run: |
           make dev-db-check
