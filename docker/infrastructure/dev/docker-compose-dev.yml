@@ -19,12 +19,12 @@ volumes:
   redis-insight-data:
     driver: local
     name: dev-redis-insight-data
-  backend-npm-data:
-    driver: local
-    name: dev-backend-npm-data
-  backend-composer-data:
-    driver: local
-    name: dev-backend-composer-data
+#  backend-npm-data:
+#    driver: local
+#    name: dev-backend-npm-data
+#  backend-composer-data:
+#    driver: local
+#    name: dev-backend-composer-data
 
 services:
   backend:
@@ -39,8 +39,8 @@ services:
     container_name: ${DOCKER_CONTAINER_NAME_PREFIX}-backend
     volumes:
       - ../../../backend:/var/www/html
-      - backend-composer-data:/.composer
-      - backend-npm-data:/.npm
+#      - backend-composer-data:/.composer
+#      - backend-npm-data:/.npm
     tty: true
     restart: unless-stopped
     depends_on:
