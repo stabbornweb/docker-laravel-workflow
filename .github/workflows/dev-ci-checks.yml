@@ -1,32 +1,37 @@
 name: Dev Backend App Checks
 
 on:
-  push:
-    branches: [ "develop", "feature/setup-git-workflows" ]
-  pull_request:
-    branches: [ "develop", "feature/setup-git-workflows" ]
-#  release:
-#    types: [published]
+#  push:
+#    branches: [ "feature/setup-git-workflows" ]
+#  pull_request:
+#    branches: [ "feature/setup-git-workflows" ]
+  workflow_dispatch:
+
 
 jobs:
   build_backend:
     name: Build Dev Backend App
     runs-on: ubuntu-latest
-    #    permissions:
-    #      contents: write
     env:
       DOCKER_COMPOSE_FILE: docker/infrastructure/dev/docker-compose-dev.yml
       ENV_PREFIX: dev
       DOCKER_APP_CONTAINER_NAME: backend
+      # use the backend folder as the default working directory for the job
+    defaults:
+      run:
+        working-directory: ./backend
     steps:
-      - uses: actions/checkout@v4
+        # Checkout the Repository
+      - name: Checking out the repository
+        uses: actions/checkout@v4
+
       - name: Docker Version
         run: |
           docker version
-#      - name: Docker Compose Settings
-#        run: |
-#          echo "UID=$(id -u)" >> .env
-#          echo "GID=$(id -g)" >> .env
+      #      - name: Docker Compose Settings
+      #        run: |
+      #          echo "UID=$(id -u)" >> .env
+      #          echo "GID=$(id -g)" >> .env
       - name: Build The Docker Images
         run: |
           make ${{ env.ENV_PREFIX }}-build
@@ -45,11 +50,9 @@ jobs:
       - name: Copy .env
         run: |
           docker compose --file=../${{ env.DOCKER_COMPOSE_FILE }} exec ${{ env.DOCKER_APP_CONTAINER_NAME }} php -r "file_exists('.env') || copy('.env.example', '.env');"
-        working-directory: ./backend
       - name: Install Composer Dependencies
         run: |
           docker compose --file=../${{ env.DOCKER_COMPOSE_FILE }} exec ${{ env.DOCKER_APP_CONTAINER_NAME }} composer install --optimize-autoloader -q --no-ansi --no-interaction --no-scripts --no-progress --prefer-dist
-        working-directory: ./backend
 
       - name: Checks the Database Availability
         run: |
