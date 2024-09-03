@@ -14,7 +14,8 @@ ENV USER=${USER}
 RUN groupadd -g ${GID} ${USER}
 
 # Create a user and group
-RUN useradd -u ${UID} -g ${USER} -G www-data,root -m -d /home/${USER} ${USER}
+RUN mkdir -p /home && \
+    useradd -u ${UID} -g ${USER} -G www-data,root -m -d /home/${USER} ${USER}
 
 # Install necessary packages
 RUN apt-get update && apt-get install -y \
@@ -30,10 +31,8 @@ RUN apt-get update && apt-get install -y \
     zip \
     unzip \
     supervisor \
-    default-mysql-client
-
-# Clear cache
-RUN apt-get clean && rm -rf /var/lib/apt/lists/*
+    default-mysql-client && \
+    apt-get clean && rm -rf /var/lib/apt/lists/*
 
 # Install PHP extensions
 RUN docker-php-ext-install pdo_mysql mbstring exif pcntl bcmath gd zip intl

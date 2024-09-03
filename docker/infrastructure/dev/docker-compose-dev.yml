@@ -1,13 +1,20 @@
+#############################################################
+###########                                       ###########
+########### Docker Compose for Development Server ###########
+###########           Laravel Projects            ###########
+###########                                       ###########
+#############################################################
+
 networks:
   db-network:
     driver: bridge
-    name: dev-db-network
+    name: ${DOCKER_APP_NAME}-dev-db-network
   nginx-network:
     driver: bridge
-    name: dev-nginx-network
+    name: ${DOCKER_APP_NAME}-dev-nginx-network
   redis-network:
     driver: bridge
-    name: dev-redis-network
+    name: ${DOCKER_APP_NAME}-dev-redis-network
 
 volumes:
   db-data:
@@ -27,6 +34,7 @@ volumes:
 #    name: dev-backend-composer-data
 
 services:
+  # PHP Service
   backend:
     build:
       context: ../../..
@@ -36,11 +44,9 @@ services:
         - "UID=${UID:-1000}"
         - "GID=${GID:-1000}"
     pull_policy: never
-    container_name: ${DOCKER_CONTAINER_NAME_PREFIX}-backend
+    container_name: ${DOCKER_APP_NAME}-dev-backend
     volumes:
       - ../../../backend:/var/www/html
-#      - backend-composer-data:/.composer
-#      - backend-npm-data:/.npm
     tty: true
     restart: unless-stopped
     depends_on:
@@ -53,11 +59,12 @@ services:
       - nginx-network
       - redis-network
 
+  # Database Service
   db:
     build:
       context: ../../..
       dockerfile: docker/infrastructure/dev/mysql/Dockerfile
-    container_name: ${DOCKER_CONTAINER_NAME_PREFIX}-db
+    container_name: ${DOCKER_APP_NAME}-dev-db
     environment:
       - MYSQL_DATABASE=${DOCKER_DB_DATABASE:-laravel}
       - MYSQL_USER=${DOCKER_DB_USERNAME:-laravel}
@@ -77,12 +84,13 @@ services:
       retries: 5
       start_period: 30s
 
+  # Nginx Service
   nginx:
     build:
       context: ../../..
       dockerfile: docker/infrastructure/dev/nginx/Dockerfile
     pull_policy: never
-    container_name: ${DOCKER_CONTAINER_NAME_PREFIX}-nginx
+    container_name: ${DOCKER_APP_NAME}-dev-nginx
     ports:
       - "8080:80"
     volumes:
@@ -99,9 +107,10 @@ services:
       retries: 3
       start_period: 10s
 
+  # Redis Service
   redis:
     image: redis:7.4-alpine
-    container_name: ${DOCKER_CONTAINER_NAME_PREFIX}-redis
+    container_name: ${DOCKER_APP_NAME}-dev-redis
     restart: always
     volumes:
       - redis-data:/data
@@ -115,9 +124,10 @@ services:
       timeout: 10s
       retries: 20
 
+  # Redis Insight Service
   redis_insight:
     image: redislabs/redisinsight:2.54.0
-    container_name: ${DOCKER_CONTAINER_NAME_PREFIX}-redis-insight
+    container_name: ${DOCKER_APP_NAME}-dev-redis-insight
     restart: always
     command:
       - 'redis-server'
